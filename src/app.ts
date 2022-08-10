@@ -5,6 +5,7 @@ import cors from 'cors'
 import config from "./config";
 import apiRouter from "./router/api_router";
 import {expressjwt} from "express-jwt";
+import publicRouter from "./router/publicRouter";
 import type {Request,Response,ErrorRequestHandler,NextFunction} from 'express';
 
 
@@ -18,13 +19,16 @@ app.use(express.urlencoded())
 
 
 // expressJWT中间件
-app.use(expressjwt({secret:config.secretKey,algorithms:["HS256"]}).unless({path:[/^\/user\//]}))
+app.use(expressjwt({secret:config.secretKey,algorithms:["HS256"]}).unless({path:[/^\/user\//,/^\/public\//]}))
 
 // 登录相关路由
 app.use('/user',loginRouter)
 
 // 后台相关路由
 app.use('/api',apiRouter)
+
+// 获取文章信息公开路由
+app.use('/public',publicRouter)
 
 // 错误中间件
 app.use((err:ErrorRequestHandler,req:Request,res:Response,next:NextFunction)=>{
